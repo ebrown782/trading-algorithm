@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trading-algorithm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trading-algorithm
+  template:
+    metadata:
+      labels:
+        app: trading-algorithm
+    spec:
+      containers:
+      - name: trading-algorithm
+        image: ebrown782/trading-algorithm:latest
+        ports:
+        - containerPort: 80
