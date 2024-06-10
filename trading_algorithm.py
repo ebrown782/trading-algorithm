@@ -11,8 +11,8 @@ logging.basicConfig(filename='trading.log', level=logging.INFO,
                     format='%(asctime)s:%(levelname)s:%(message)s')
 
 # Define your API credentials
-API_KEY = 'PKCIR6SONIVPIGFUDTZO'
-API_SECRET = 'tFw9APpeX2TnaIl7jRGs0Jm6TEtGDmfDsrUKIT4t'
+API_KEY = 'your_api_key'
+API_SECRET = 'your_api_secret'
 BASE_URL = 'https://paper-api.alpaca.markets'
 
 # Initialize the Alpaca API
@@ -25,6 +25,8 @@ long_window = 100
 initial_capital = 100000
 transaction_cost = 0.001  # 0.1% per trade
 risk_tolerance = 0.02  # Risk 2% of capital on each trade
+
+running = False
 
 # Fetch historical data
 async def fetch_historical_data(session, symbol, start_date, end_date):
@@ -110,11 +112,12 @@ def simulate_trading(data, initial_capital, transaction_cost, risk_tolerance):
 
 # Main trading loop
 async def trading_loop():
+    global running
     capital = initial_capital
     positions = 0
     
     async with aiohttp.ClientSession() as session:
-        while True:
+        while running:
             try:
                 data = await fetch_real_time_data(session, symbol)
                 data = calculate_moving_averages(data, short_window, long_window)
@@ -144,4 +147,12 @@ async def trading_loop():
 
             await asyncio.sleep(60)  # Wait for a minute before next iteration
 
+def start_trading():
+    global running
+    running = True
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(trading_loop())
 
+def stop_trading():
+    global running
+    running = False
